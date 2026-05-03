@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Connexion — Vitalys{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <aside class="auth-side">
+    <div>
+      <div class="brand" style="color:#fff;">
+        <span class="brand-mark">V</span>
+        <span class="brand-name" style="color:#fff;">Vitalys</span>
+      </div>
+      <h2 style="margin-top: 60px;">Heureux de te revoir.</h2>
+      <p style="margin-top: 16px;">Connecte-toi pour retrouver ton journal, tes repas et ton programme personnalisé.</p>
+    </div>
+    <ul class="feature-list" style="list-style:none; padding:0;">
+      <li>· Journal alimentaire avec photos</li>
+      <li>· Suivi de poids hebdo</li>
+      <li>· Programme sport adapté à ton objectif</li>
+    </ul>
+  </aside>
+
+  <div class="auth-form-wrap">
+    <form class="auth-form" method="POST">
+      <h1>Connexion</h1>
+      <p class="subtitle">Entre tes identifiants pour accéder à ton espace.</p>
+
+      <div class="field">
+        <label for="email">Adresse email</label>
+        <input id="email" name="email" type="email" required placeholder="prenom@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" required placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Me connecter</button>
+
+      <p class="auth-foot">Pas encore de compte ? <a href="{{ url_for('register') }}">Créer un compte</a></p>
+    </form>
+  </div>
+</div>
+{% endblock %}

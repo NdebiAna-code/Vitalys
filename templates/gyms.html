@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Salles & studios — Vitalys{% endblock %}
+{% block content %}
+<section class="page">
+  <div class="container">
+    <div class="page-head">
+      <h1>Salles & studios partenaires</h1>
+      <p>Plus de 30 lieux à travers la France, classés par catégorie.</p>
+    </div>
+
+    <div class="gyms-tabs">
+      <a href="{{ url_for('gyms', category='classic') }}" class="gyms-tab {% if category == 'classic' %}active{% endif %}">Salles classiques <span class="count">{{ counts.classic }}</span></a>
+      <a href="{{ url_for('gyms', category='pilates') }}" class="gyms-tab {% if category == 'pilates' %}active{% endif %}">Studios Pilates <span class="count">{{ counts.pilates }}</span></a>
+      <a href="{{ url_for('gyms', category='yoga') }}" class="gyms-tab {% if category == 'yoga' %}active{% endif %}">Studios Yoga <span class="count">{{ counts.yoga }}</span></a>
+    </div>
+
+    <form class="filter-bar" method="GET">
+      <input type="hidden" name="category" value="{{ category }}">
+      <input type="text" name="city" placeholder="Filtrer par ville (Paris, Lyon…)" value="{{ selected_city }}">
+      <button class="btn btn-ghost">Filtrer</button>
+      {% if selected_city %}
+        <a href="{{ url_for('gyms', category=category) }}" class="muted" style="font-size: 13px;">Effacer</a>
+      {% endif %}
+    </form>
+
+    {% if items %}
+      <div class="gym-grid">
+        {% for g in items %}
+          <article class="gym-card">
+            <div class="pic" style="background-image: url('{{ g.image }}')"></div>
+            <div class="info">
+              <span class="city">{{ g.city }}</span>
+              <h3>{{ g.name }}</h3>
+              <p class="addr">{{ g.address }}</p>
+              <p class="phone">{{ g.phone }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty">Aucun lieu ne correspond à ton filtre.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

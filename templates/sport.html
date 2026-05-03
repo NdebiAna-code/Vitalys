@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Mon programme sport — Vitalys{% endblock %}
+{% block content %}
+<section class="page">
+  <div class="container">
+    <div class="page-head">
+      <h1>Mon programme sport</h1>
+      <p>Choisis une ou plusieurs disciplines. Le programme s'ajuste à ton choix et à ton objectif.</p>
+    </div>
+
+    {% if not current_user.goal %}
+      <div class="empty">Renseigne d'abord ton objectif depuis ton <a href="{{ url_for('profile') }}">profil</a> pour générer un programme.</div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="choices">
+        <label class="choice">
+          <input type="checkbox" name="sport" value="gym" {% if 'gym' in active %}checked{% endif %}>
+          <img class="pic" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&auto=format&fit=crop&q=70" alt="Salle de sport">
+          <h4>Salle de sport</h4>
+          <p>Renforcement musculaire, cardio, charges libres et machines.</p>
+        </label>
+        <label class="choice">
+          <input type="checkbox" name="sport" value="pilates" {% if 'pilates' in active %}checked{% endif %}>
+          <img class="pic" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&auto=format&fit=crop&q=70" alt="Pilates">
+          <h4>Pilates</h4>
+          <p>Gainage profond, posture, mobilité — Reformer & tapis.</p>
+        </label>
+        <label class="choice">
+          <input type="checkbox" name="sport" value="yoga" {% if 'yoga' in active %}checked{% endif %}>
+          <img class="pic" src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=600&auto=format&fit=crop&q=70" alt="Yoga">
+          <h4>Yoga</h4>
+          <p>Vinyasa, Hatha, Yin — souplesse, équilibre, ancrage mental.</p>
+        </label>
+      </div>
+      <button class="btn btn-green">Valider mon choix</button>
+      {% if current_user.sport_choice %}
+        <span class="muted" style="margin-left: 14px;">Sélection actuelle : <strong>{{ current_user.sport_choice.replace(',', ' + ') }}</strong></span>
+      {% endif %}
+    </form>
+
+    {% if program %}
+      {% for block in program %}
+        <div class="program-block">
+          <h3>{{ block.title }}</h3>
+          <div class="day-grid">
+            {% for d in block.days %}
+              <div class="day-card">
+                <div class="day-name">{{ d.day }}</div>
+                <div class="focus">{{ d.focus }}</div>
+                <ul>
+                  {% for ex in d.exercises %}
+                    <li>{{ ex }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    {% elif current_user.sport_choice and current_user.goal %}
+      <div class="empty mt-4">Aucun programme à afficher.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

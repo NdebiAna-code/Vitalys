@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}{{ plan.title }} — Vitalys{% endblock %}
+{% block content %}
+<section class="page">
+  <div class="container">
+    <div class="page-head">
+      <h1>{{ plan.title }}</h1>
+      <p>Adapté à ton objectif : <strong>{{ goal_label }}</strong>. Validé par ton IMC.</p>
+    </div>
+
+    <div class="plan-hero">
+      <div class="text">
+        <div>
+          <span class="tag" style="background:rgba(255,255,255,.15); color:#fff;">{{ goal_label }}</span>
+          <h1 style="margin-top:14px;">{{ plan.title }}</h1>
+          <p style="margin-top:14px; max-width: 480px;">{{ plan.tagline }}</p>
+        </div>
+        <div class="meta">
+          <div><span>Calories</span><strong>{{ plan.kcal }}</strong></div>
+          <div><span>Macros</span><strong>{{ plan.macros }}</strong></div>
+          <div><span>Durée</span><strong>7 jours</strong></div>
+        </div>
+      </div>
+      <img src="{{ plan.image }}" alt="{{ plan.title }}">
+    </div>
+
+    {% for day in plan.days %}
+      <div class="plan-day">
+        <h3>{{ day.day }}</h3>
+        {% for meal in day.meals %}
+          <div class="meal-row">
+            <img src="{{ meal.image }}" alt="{{ meal.name }}">
+            <div>
+              <div class="slot">{{ meal.slot }}</div>
+              <div class="name">{{ meal.name }}</div>
+            </div>
+            <span class="kcal">{{ meal.kcal }} kcal</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

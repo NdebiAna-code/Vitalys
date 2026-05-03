@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Plans alimentaires — Vitalys{% endblock %}
+{% block content %}
+<section class="page">
+  <div class="container">
+    <div class="page-head">
+      <h1>Trois plans, un objectif chacun</h1>
+      <p>Adaptés selon ton IMC. Connecte-toi pour débloquer ton plan complet de 7 jours.</p>
+    </div>
+
+    <div class="grid-3">
+      {% for key, p in plans.items() %}
+        <div class="card" style="padding: 0; overflow: hidden;">
+          <img src="{{ p.image }}" alt="{{ p.title }}" style="width:100%; height:200px; object-fit: cover;">
+          <div style="padding: 24px;">
+            <span class="tag tag-green">{{ goals[key] }}</span>
+            <h3 style="font-family:'Fraunces', serif; font-size: 24px; color: var(--black); margin: 10px 0 6px;">{{ p.title }}</h3>
+            <p class="muted">{{ p.tagline }}</p>
+            <p style="margin: 14px 0 0; font-size: 13.5px; color: var(--ink);"><strong>{{ p.kcal }}</strong></p>
+            <p style="margin: 4px 0 18px; color: var(--muted); font-size: 13px;">{{ p.macros }}</p>
+            <a href="{{ url_for('register') }}" class="btn btn-ghost">Débloquer le plan complet</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

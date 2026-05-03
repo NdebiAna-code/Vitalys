@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Inscription — Vitalys{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <aside class="auth-side">
+    <div>
+      <div class="brand" style="color:#fff;">
+        <span class="brand-mark">V</span>
+        <span class="brand-name" style="color:#fff;">Vitalys</span>
+      </div>
+      <h2 style="margin-top: 60px;">Ton espace,<br>ton rythme,<br>tes résultats.</h2>
+      <p style="margin-top: 16px;">Crée ton compte gratuit et débloque ton plan personnalisé en moins d'une minute.</p>
+    </div>
+    <ul class="feature-list" style="list-style:none; padding:0;">
+      <li>· Plan alimentaire adapté à ton IMC</li>
+      <li>· Programme sport sur-mesure</li>
+      <li>· Plus de 30 lieux partenaires en France</li>
+    </ul>
+  </aside>
+
+  <div class="auth-form-wrap">
+    <form class="auth-form" method="POST">
+      <h1>Créer un compte</h1>
+      <p class="subtitle">C'est rapide, gratuit, et tes données restent à toi.</p>
+
+      <div class="field">
+        <label for="email">Adresse email</label>
+        <input id="email" name="email" type="email" required placeholder="prenom@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" required placeholder="Min. 6 caractères" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label for="confirm">Confirmer le mot de passe</label>
+        <input id="confirm" name="confirm" type="password" required autocomplete="new-password">
+      </div>
+      <button type="submit" class="btn btn-green btn-block">Créer mon compte</button>
+
+      <p class="auth-foot">Déjà membre ? <a href="{{ url_for('login') }}">Se connecter</a></p>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% block title %}Mon espace — Vitalys{% endblock %}
+{% block content %}
+<section class="page">
+  <div class="container">
+    <div class="page-head">
+      <h1>Bonjour, {{ current_user.first_name or current_user.email.split('@')[0] }}</h1>
+      <p>Pilote ton profil, ton journal et tes objectifs depuis un seul endroit.</p>
+    </div>
+
+    {% if current_user.bmi %}
+    <div class="bmi-card mb-2">
+      <div>
+        <div class="num">{{ current_user.bmi }}</div>
+      </div>
+      <div style="flex:1;">
+        <div class="label">IMC actuel</div>
+        <div class="cat">{{ current_user.bmi_category }}</div>
+        {% if current_user.bmi < 18.5 %}
+        <div class="note">Ton IMC est en dessous de 18.5. La perte de poids n'est pas recommandée — focus sur la prise de masse ou le maintien.</div>
+        {% elif current_user.bmi < 25 %}
+        <div class="note">Tu es dans la zone normale. Tu peux choisir librement entre perte, maintien ou prise.</div>
+        {% else %}
+        <div class="note">Une perte progressive accompagnée d'un programme adapté est recommandée.</div>
+        {% endif %}
+      </div>
+      <div>
+        {% if current_user.goal %}
+          <span class="tag tag-green">Objectif : {{ goals[current_user.goal] }}</span>
+        {% else %}
+          <span class="tag" style="background:#fff; color: var(--black);">Objectif à définir</span>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="tabs">
+      <button class="tab" data-tab="profil">Profil</button>
+      <button class="tab" data-tab="journal">Journal</button>
+      <button class="tab" data-tab="poids">Suivi poids</button>
+      <button class="tab" data-tab="pas">Pas</button>
+    </div>
+
+    <!-- ====== PROFIL ====== -->
+    <div class="tab-panel" data-panel="profil">
+      <div class="grid-2">
+        <div class="card">
+          <h2 class="card-title">Mes informations</h2>
+          <p class="card-sub">Permet à Vitalys de calculer ton IMC et d'adapter ton plan.</p>
+          <form method="POST">
+            <div class="field">
+              <label>Prénom</label>
+              <input type="text" name="first_name" value="{{ current_user.first_name or '' }}">
+            </div>
+            <div class="grid-3" style="gap: 12px;">
+              <div class="field"><label>Âge</label><input type="number" name="age" min="10" max="100" value="{{ current_user.age or '' }}"></div>
+              <div class="field"><label>Poids (kg)</label><input type="number" step="0.1" name="weight" min="30" max="250" value="{{ current_user.weight or '' }}"></div>
+              <div class="field"><label>Taille (cm)</label><input type="number" name="height" min="100" max="230" value="{{ current_user.height or '' }}"></div>
+            </div>
+            <div class="field">
+              <label>Objectif</label>
+              <select name="goal">
+                <option value="">— Choisir —</option>
+                {% for key, label in goals.items() %}
+                  {% set disabled = current_user.bmi and current_user.bmi < 18.5 and key == 'loss' %}
+                  <option value="{{ key }}" {% if current_user.goal == key %}selected{% endif %} {% if disabled %}disabled{% endif %}>
+                    {{ label }}{% if disabled %} (non recommandé : IMC < 18.5){% endif %}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-green">Enregistrer</button>
+          </form>
+        </div>
+
+        <div class="card" style="background: linear-gradient(160deg, var(--green-50), #fff);">
+          <h2 class="card-title">Pourquoi l'IMC ?</h2>
+          <p class="card-sub">L'IMC (Indice de Masse Corporelle) est calculé à partir de ton poids et de ta taille.</p>
+          <ul style="padding-left: 18px; color: var(--ink); line-height: 1.8;">
+            <li><strong>&lt; 18.5</strong> — Insuffisance pondérale → perte de poids déconseillée</li>
+            <li><strong>18.5 – 24.9</strong> — Normal</li>
+            <li><strong>25 – 29.9</strong> — Surpoids</li>
+            <li><strong>≥ 30</strong> — Obésité</li>
+          </ul>
+          <p class="muted" style="font-size: 13px; margin-top: 14px;">Vitalys protège ta santé : si ton IMC est trop bas, l'option "perte de poids" est désactivée.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== JOURNAL ====== -->
+    <div class="tab-panel" data-panel="journal" style="display:none;">
+      <div class="grid-2">
+        <div class="card">
+          <h2 class="card-title">Ajouter un repas</h2>
+          <p class="card-sub">Capture une photo et garde une trace de ce que tu manges cette semaine.</p>
+          <form method="POST" action="{{ url_for('add_meal') }}" enctype="multipart/form-data">
+            <div class="field"><label>Nom du plat</label><input type="text" name="name" required placeholder="Ex. Bowl saumon avocat"></div>
+            <div class="field">
+              <label>Type</label>
+              <select name="meal_type">
+                <option value="Petit-déjeuner">Petit-déjeuner</option>
+                <option value="Déjeuner" selected>Déjeuner</option>
+                <option value="Collation">Collation</option>
+                <option value="Dîner">Dîner</option>
+              </select>
+            </div>
+            <div class="field"><label>Photo (optionnelle)</label><input type="file" name="photo" accept="image/*" capture="environment"></div>
+            <div class="field"><label>Notes</label><textarea name="notes" rows="2" placeholder="Mes ressentis, l'envie, le goût…"></textarea></div>
+            <button class="btn btn-green">Enregistrer le repas</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Repas de la semaine</h2>
+          <p class="card-sub">{{ week_meals|length }} repas enregistrés sur les 7 derniers jours.</p>
+          {% if week_meals %}
+            <div class="meal-list">
+              {% for m in week_meals %}
+              <div class="meal-item">
+                <div class="ph" style="{% if m.photo %}background-image:url('{{ url_for('static', filename=m.photo) }}'){% else %}background-image: linear-gradient(135deg, var(--green-300), var(--green-700));{% endif %}"></div>
+                <div class="meta">
+                  <h4>{{ m.name }}</h4>
+                  <div class="when">{{ m.eaten_at.strftime('%a %d %b · %H:%M') }}</div>
+                  {% if m.meal_type %}<span class="type">{{ m.meal_type }}</span>{% endif %}
+                  {% if m.notes %}<p class="muted" style="font-size: 13px; margin: 8px 0 0;">{{ m.notes }}</p>{% endif %}
+                </div>
+                <form method="POST" action="{{ url_for('delete_meal', meal_id=m.id) }}">
+                  <button class="btn btn-danger" style="padding: 6px 12px; font-size: 12.5px;">Supprimer</button>
+                </form>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="empty">Aucun repas cette semaine. Lance-toi en ajoutant ton premier plat ci-contre.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== POIDS ====== -->
+    <div class="tab-panel" data-panel="poids" style="display:none;">
+      <div class="grid-2">
+        <div class="card">
+          <h2 class="card-title">Nouvelle pesée</h2>
+          <p class="card-sub">Note ton poids une fois par semaine pour visualiser ta progression.</p>
+          <form method="POST" action="{{ url_for('add_weight') }}">
+            <div class="row-form">
+              <div class="field"><label>Poids (kg)</label><input type="number" step="0.1" name="weight" required min="30" max="250"></div>
+              <div class="field"><label>Date</label><input type="date" name="date" value="{{ today_date if today_date else '' }}"></div>
+              <button class="btn btn-green">Ajouter</button>
+            </div>
+          </form>
+        </div>
+        <div class="card">
+          <h2 class="card-title">Évolution semaine par semaine</h2>
+          {% if weights and weights|length > 0 %}
+            {% set values = weights|map(attribute='weight')|list %}
+            {% set min_v = values|min %}
+            {% set max_v = values|max %}
+            {% set spread = (max_v - min_v) if (max_v - min_v) > 0 else 1 %}
+            {% set count = values|length %}
+            <div class="weight-chart">
+              <svg viewBox="0 0 600 200" preserveAspectRatio="none">
+                {% set step = 600 / (count if count > 1 else 2) %}
+                {% set pts = [] %}
+                {% for w in weights %}
+                  {% set x = (loop.index0 * (600 / ((count-1) if count>1 else 1))) %}
+                  {% set y = 180 - ((w.weight - min_v) / spread * 150) - 10 %}
+                  {% set _ = pts.append('%.1f,%.1f' % (x, y)) %}
+                {% endfor %}
+                <polygon class="weight-area" points="0,200 {{ pts|join(' ') }} 600,200" />
+                <polyline class="weight-line" points="{{ pts|join(' ') }}" />
+                {% for w in weights %}
+                  {% set x = (loop.index0 * (600 / ((count-1) if count>1 else 1))) %}
+                  {% set y = 180 - ((w.weight - min_v) / spread * 150) - 10 %}
+                  <circle class="weight-dot" cx="{{ '%.1f'|format(x) }}" cy="{{ '%.1f'|format(y) }}" r="5"/>
+                {% endfor %}
+              </svg>
+            </div>
+            <div style="display:flex; justify-content: space-between; color: var(--muted); font-size: 12.5px; margin-top: 8px;">
+              <span>{{ weights[0].recorded_on.strftime('%d %b') }}</span>
+              <span>{{ weights[-1].recorded_on.strftime('%d %b') }}</span>
+            </div>
+            <div style="margin-top: 18px; display:flex; gap: 16px;">
+              <div><div class="muted" style="font-size:12px;">Min</div><strong>{{ min_v }} kg</strong></div>
+              <div><div class="muted" style="font-size:12px;">Max</div><strong>{{ max_v }} kg</strong></div>
+              <div><div class="muted" style="font-size:12px;">Actuel</div><strong>{{ weights[-1].weight }} kg</strong></div>
+            </div>
+          {% else %}
+            <div class="empty">Pas encore de pesée. Note ton premier poids pour démarrer ton suivi.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== PAS ====== -->
+    <div class="tab-panel" data-panel="pas" style="display:none;">
+      <div class="grid-2">
+        <div class="card">
+          <h2 class="card-title">Mes pas aujourd'hui</h2>
+          {% set today_steps = steps_today.steps if steps_today else 0 %}
+          {% set pct = (today_steps / 10000 * 100) %}
+          <div class="steps-display">
+            <span class="num">{{ "{:,}".format(today_steps).replace(',', ' ') }}</span>
+            <span class="target">/ 10 000 pas</span>
+          </div>
+          <div class="progress" data-pct="{{ pct }}"><span style="width:0;"></span></div>
+          <form method="POST" action="{{ url_for('add_steps') }}" style="margin-top: 24px;">
+            <div class="row-form">
+              <div class="field"><label>Pas</label><input type="number" name="steps" min="0" max="100000" required></div>
+              <div class="field"><label>Date</label><input type="date" name="date" value=""></div>
+              <button class="btn btn-green">Mettre à jour</button>
+            </div>
+          </form>
+        </div>
+        <div class="card">
+          <h2 class="card-title">Historique 14 jours</h2>
+          {% if steps %}
+            <div style="display:grid; grid-template-columns: repeat(7, 1fr); gap: 8px; align-items: end; min-height: 180px;">
+              {% set max_steps = (steps|map(attribute='steps')|max) or 1 %}
+              {% for s in steps[:14]|reverse %}
+                {% set h = (s.steps / max_steps * 160)|int %}
+                <div title="{{ s.recorded_on }} — {{ s.steps }} pas" style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+                  <div style="width: 26px; height: {{ h }}px; background: linear-gradient(180deg, var(--green-500), var(--green-700)); border-radius: 6px;"></div>
+                  <span style="font-size:10px; color: var(--muted);">{{ s.recorded_on.strftime('%d/%m') }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="empty">Pas encore d'historique. Note tes pas chaque soir pour visualiser tes habitudes.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

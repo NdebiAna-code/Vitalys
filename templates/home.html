@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="hero-eyebrow"><span class="dot"></span> Coaching personnel · 100% gratuit</span>
+      <h1>Bouge mieux,<br>mange juste,<br><em>vis pleinement.</em></h1>
+      <p class="lead">Vitalys assemble ton programme sport, ton plan alimentaire et ton journal de progression dans un espace personnel — adapté à ton corps, ton objectif, et ton rythme.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="{{ url_for('register') }}">Créer mon espace</a>
+        <a class="btn btn-ghost" href="{{ url_for('gyms') }}">Voir les salles</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong>{{ gym_count }}+</strong><span>lieux en France</span></div>
+        <div class="stat"><strong>3</strong><span>disciplines combinables</span></div>
+        <div class="stat"><strong>21</strong><span>jours de menus</span></div>
+      </div>
+    </div>
+    <div class="hero-collage">
+      <img class="img1" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1000&auto=format&fit=crop&q=70" alt="Coaching">
+      <img class="img2" src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=900&auto=format&fit=crop&q=70" alt="Healthy bowl">
+      <div class="badge"><span class="num">+12k</span><span>membres actifs<br>cette semaine</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Tout-en-un</span>
+      <h2>Une routine qui te ressemble</h2>
+      <p>Définis ton profil, suis tes progrès et obtiens un programme sportif et alimentaire adapté à ton objectif validé par ton IMC.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="ico">01</div>
+        <h3>Profil intelligent</h3>
+        <p>Calcul automatique de l'IMC. Si ton corps n'a pas besoin de perdre, on t'oriente vers le maintien ou la prise de masse — sans jugement.</p>
+      </div>
+      <div class="feature-card">
+        <div class="ico">02</div>
+        <h3>Journal personnel</h3>
+        <p>Photos de tes repas, suivi de poids semaine par semaine et compteur de pas quotidien — tout au même endroit.</p>
+      </div>
+      <div class="feature-card">
+        <div class="ico">03</div>
+        <h3>Programme sport</h3>
+        <p>Choisis Salle, Pilates, Yoga ou un combo. Le programme s'adapte à ton choix et à ton objectif.</p>
+      </div>
+      <div class="feature-card">
+        <div class="ico">04</div>
+        <h3>Plan alimentaire</h3>
+        <p>7 jours de menus illustrés, calibrés selon ton objectif validé par l'IMC. Plaisir et équilibre garantis.</p>
+      </div>
+      <div class="feature-card">
+        <div class="ico">05</div>
+        <h3>Salles partout en France</h3>
+        <p>Plus de 30 lieux : salles classiques, studios Pilates, studios Yoga — Paris, Lyon, Marseille et bien plus.</p>
+      </div>
+      <div class="feature-card">
+        <div class="ico">06</div>
+        <h3>Espace privé sécurisé</h3>
+        <p>Tes données restent à toi. Inscription en 30 secondes, mot de passe chiffré, déconnexion en un clic.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" style="padding-top: 0;">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Galerie</span>
+      <h2>L'inspiration au quotidien</h2>
+    </div>
+    <div class="showcase">
+      <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=700&auto=format&fit=crop&q=70" alt="Salle de sport">
+      <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=700&auto=format&fit=crop&q=70" alt="Pilates">
+      <img src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=700&auto=format&fit=crop&q=70" alt="Yoga">
+      <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=700&auto=format&fit=crop&q=70" alt="Plat équilibré">
+    </div>
+  </div>
+</section>
+
+<section class="block" style="background: linear-gradient(180deg, #fff 0%, var(--green-50) 100%); padding: 80px 0;">
+  <div class="container center">
+    <h2 style="font-family: 'Fraunces', serif; font-size: 40px; color: var(--black); margin: 0 0 12px;">Prête à commencer ?</h2>
+    <p class="muted" style="max-width: 540px; margin: 0 auto 28px;">Crée ton compte gratuit, complète ton profil en moins d'une minute, et lance ta routine dès aujourd'hui.</p>
+    <a href="{{ url_for('register') }}" class="btn btn-green">Créer mon espace personnel</a>
+  </div>
+</section>
+{% endblock %}
